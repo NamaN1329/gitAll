@@ -1,25 +1,36 @@
 import React, { useState } from 'react';
-import OTPInput,  { ResendOTP } from 'react-otp-input';
+import OTPInput from 'react-otp-input';
 import { useHistory } from 'react-router-dom';
 
  const OtpVerify = () => {
   const history = useHistory();
-
+  const ResendOtp = async() => {
+    const resp = fetch('/resendOtp',{
+      method : "POST",
+       headers : {"Content-Type":"application/json"},
+      body : JSON.stringify({ email:"namanthapa1212@gmail.com"}),
+    })
+    const data = await resp.json();
+    if (data.status===200 && !data) {
+      alert('Resended OTP');
+    }
+    else{
+      alert('Somthing went worng');
+    }
+  }
   const [OTP, setOTP] = useState("");
+  const button = { width : "10.5em", }
   const input  =  {
-    margin: "0 5px",
+    margin: "20px 5px",
     textAlign: "center",
-    lineHeight: "80px",
-    fontSize: "50px",
-    border: "solid 1px #ccc",
-    boxShadow: "0 0 5px #ccc inset",
+    lineHeight: "60px",
+    fontSize: "45px",
     outline: "none",
     width: "20%",
     transition: "all .2s ease-in-out",
     borderRadius: "3px"
   }
 const OtpSubmit = async() => {
-  alert(OTP)
   const resp = fetch('/otpCheck', {
         method : "POST",
        headers : {"Content-Type":"application/json"},
@@ -57,18 +68,23 @@ const OtpSubmit = async() => {
     <OTPInput 
       value={OTP}
       onChange={setOTP}
+      numInputs={6}
+      separator={<span>&nbsp;</span>}
       autoFocus
       OTPLength={6}
       otpType="number"
       disabled={false}
       secure
     />
-      <button class="btn btn-primary btn-embossed" onClick={OtpSubmit}>Verify</button>
+        <div style={{display : "inline-flex" }}>
+        <button className="btn btn-primary btn-embossed" style={button} onClick={OtpSubmit}>Verify</button>
+        <button className="btn btn-info btn-embossed" style={button} onClick={ResendOtp}>Resend</button>
+      </div>
     </div>
     
     <div>
       Didn't receive the code?<br />
-      <a href="/">Send code again</a><br />
+      <a href="#" onClick={ResendOtp}>Send code again</a><br />
       <a href="/">Change Email ID</a>
     </div>
   </div>
